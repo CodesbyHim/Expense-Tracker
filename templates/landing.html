@@ -2,6 +2,66 @@
 
 {% block title %}Spendly — Track Every Rupee{% endblock %}
 
+{% block head %}
+<style>
+    .hero-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background: rgba(15, 15, 15, 0.72);
+        z-index: 1000;
+    }
+
+    .hero-modal.is-open {
+        display: flex;
+    }
+
+    .hero-modal-dialog {
+        position: relative;
+        width: min(920px, 100%);
+        aspect-ratio: 16 / 9;
+        background: #000;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    .hero-modal-close {
+        position: absolute;
+        top: 0.85rem;
+        right: 0.85rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(17, 17, 17, 0.84);
+        color: #fff;
+        font-size: 1.6rem;
+        line-height: 1;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .hero-modal-close:hover {
+        background: rgba(17, 17, 17, 0.98);
+    }
+
+    .hero-modal-frame {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    body.hero-modal-open {
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
 <section class="hero">
@@ -21,7 +81,7 @@
             </p>
             <div class="hero-actions">
                 <a href="{{ url_for('register') }}" class="hero-btn hero-btn-primary">Create free account</a>
-                <a href="{{ url_for('login') }}" class="hero-btn hero-btn-secondary">See how it works</a>
+                <a href="#" class="hero-btn hero-btn-secondary" data-hero-modal-open>See how it works</a>
             </div>
         </div>
         <div class="hero-visual">
@@ -67,6 +127,21 @@
     </div>
 </section>
 
+<div class="hero-modal" data-hero-modal aria-hidden="true">
+    <div class="hero-modal-dialog" role="dialog" aria-modal="true" aria-label="Spendly product video">
+        <button type="button" class="hero-modal-close" data-hero-modal-close aria-label="Close video">&times;</button>
+        <iframe
+            class="hero-modal-frame"
+            data-hero-modal-frame
+            title="Spendly product video"
+            src=""
+            data-src="https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=1&rel=0"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+</div>
+
 <section class="features">
     <div class="features-inner">
         <div class="feature-card">
@@ -95,4 +170,53 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        const openTrigger = document.querySelector('[data-hero-modal-open]');
+        const modal = document.querySelector('[data-hero-modal]');
+        const closeTrigger = document.querySelector('[data-hero-modal-close]');
+        const frame = document.querySelector('[data-hero-modal-frame]');
+
+        if (!openTrigger || !modal || !closeTrigger || !frame) {
+            return;
+        }
+
+        const getVideoUrl = () => frame.dataset.src;
+
+        const openModal = (event) => {
+            event.preventDefault();
+            frame.src = getVideoUrl();
+            modal.classList.add('is-open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('hero-modal-open');
+            closeTrigger.focus();
+        };
+
+        const closeModal = () => {
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('hero-modal-open');
+            frame.src = '';
+            openTrigger.focus();
+        };
+
+        openTrigger.addEventListener('click', openModal);
+        closeTrigger.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+                closeModal();
+            }
+        });
+    })();
+</script>
 {% endblock %}
