@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Terms and Conditions — Spendly{% endblock %}
+
+{% block head %}
+<style>
+.page-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 2rem 5rem;
+}
+
+.legal-content h1 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+}
+
+.last-updated {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    margin-bottom: 3rem;
+}
+
+.legal-content section {
+    margin-bottom: 2rem;
+}
+
+.legal-content h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+}
+
+.legal-content p {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+}
+
+.legal-content ul {
+    margin: 0.5rem 0 0 1.5rem;
+}
+
+.legal-content li {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 0.4rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="legal-content">
+        <h1>Terms and Conditions</h1>
+        <p class="last-updated">Last updated: May 2026</p>
+
+        <section>
+            <h2>1. Acceptance of Terms</h2>
+            <p>By accessing and using Spendly, you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our service.</p>
+        </section>
+
+        <section>
+            <h2>2. Use of Service</h2>
+            <p>Spendly is a personal expense tracking tool intended for lawful purposes only. You agree to use the service responsibly and not to:</p>
+            <ul>
+                <li>Violate any applicable laws or regulations</li>
+                <li>Attempt to gain unauthorized access to any part of the service</li>
+                <li>Use the service in any manner that could damage or overburden our systems</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>3. User Data</h2>
+            <p>You retain full ownership of all data you enter into Spendly. We do not claim any rights to your personal expense information. You are responsible for maintaining the accuracy and security of your account credentials.</p>
+        </section>
+
+        <section>
+            <h2>4. Limitations of Liability</h2>
+            <p>Spendly is provided "as is" without any warranties, express or implied. We do not guarantee that the service will be error-free or uninterrupted. In no event shall we be liable for any indirect, incidental, or consequential damages arising from your use of the service.</p>
+        </section>
+
+        <section>
+            <h2>5. Changes to Terms</h2>
+            <p>We reserve the right to modify these Terms and Conditions at any time. Any changes will be posted on this page and will take effect immediately upon posting. Your continued use of Spendly after any changes constitutes acceptance of the new terms.</p>
+        </section>
+
+        <section>
+            <h2>6. Contact</h2>
+            <p>If you have any questions about these Terms and Conditions, please contact us through the app.</p>
+        </section>
+    </div>
+</div>
+{% endblock %}
