@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy — Spendly{% endblock %}
+
+{% block head %}
+<style>
+.page-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 2rem 5rem;
+}
+
+.legal-content h1 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+}
+
+.last-updated {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    margin-bottom: 3rem;
+}
+
+.legal-content section {
+    margin-bottom: 2rem;
+}
+
+.legal-content h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+}
+
+.legal-content p {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+}
+
+.legal-content ul {
+    margin: 0.5rem 0 0 1.5rem;
+}
+
+.legal-content li {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 0.4rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="legal-content">
+        <h1>Privacy Policy</h1>
+        <p class="last-updated">Last updated: May 2026</p>
+
+        <section>
+            <h2>1. Data We Collect</h2>
+            <p>Spendly collects only the data you provide to us directly. This includes expense information such as amount, category, date, and description that you enter into the app. We also collect basic account information such as your email address when you register.</p>
+        </section>
+
+        <section>
+            <h2>2. How We Use Your Data</h2>
+            <p>Your data is used solely to provide and improve our expense tracking service. We use your information to:</p>
+            <ul>
+                <li>Store and display your expense records</li>
+                <li>Generate spending summaries and insights</li>
+                <li>Maintain your account and provide customer support</li>
+                <li>Improve and optimize our service functionality</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>3. Data Storage</h2>
+            <p>Your personal expense data is stored locally on your device or on our secure servers, depending on your usage. We implement appropriate security measures to protect your data against unauthorized access, alteration, or destruction. You can request deletion of your data at any time.</p>
+        </section>
+
+        <section>
+            <h2>4. Third Party Services</h2>
+            <p>Spendly does not share your personal data with third parties for marketing purposes. We may use third-party services for hosting and infrastructure purposes, and these providers are contractually obligated to maintain the confidentiality and security of your data.</p>
+        </section>
+
+        <section>
+            <h2>5. Contact Us</h2>
+            <p>If you have any questions or concerns about this Privacy Policy or our data practices, please contact us through the app. We are committed to addressing any concerns promptly and transparently.</p>
+        </section>
+    </div>
+</div>
+{% endblock %}
