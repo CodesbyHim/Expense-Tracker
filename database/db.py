@@ -43,6 +43,21 @@ def init_db():
         conn.close()
 
 
+def create_user(name, email, password):
+    """Creates a user and returns the new user ID."""
+    conn = get_db()
+    try:
+        password_hash = generate_password_hash(password)
+        cursor = conn.execute(
+            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+            (name, email, password_hash)
+        )
+        conn.commit()
+        return cursor.lastrowid
+    finally:
+        conn.close()
+
+
 def seed_db():
     """Inserts sample data for development if not already present."""
     conn = get_db()
