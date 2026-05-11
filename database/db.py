@@ -58,6 +58,18 @@ def create_user(name, email, password):
         conn.close()
 
 
+def get_user_by_email(email):
+    """Fetches a user row by email or returns None."""
+    conn = get_db()
+    try:
+        return conn.execute(
+            "SELECT id, name, email, password_hash, created_at FROM users WHERE email = ?",
+            (email,)
+        ).fetchone()
+    finally:
+        conn.close()
+
+
 def seed_db():
     """Inserts sample data for development if not already present."""
     conn = get_db()
