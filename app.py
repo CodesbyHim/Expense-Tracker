@@ -13,6 +13,13 @@ with app.app_context():
     seed_db()
 
 
+@app.context_processor
+def inject_nav_user():
+    if session.get("user_id"):
+        return {"nav_user_name": "Demo User"}
+    return {}
+
+
 # ------------------------------------------------------------------ #
 # Routes                                                              #
 # ------------------------------------------------------------------ #
@@ -72,7 +79,7 @@ def login():
             return render_template("login.html")
 
         session["user_id"] = user["id"]
-        return redirect(url_for("landing"))
+        return redirect(url_for("profile"))
 
     abort(405)
 
@@ -99,7 +106,88 @@ def logout():
 
 @app.route("/profile")
 def profile():
-    return "Profile page — coming in Step 4"
+    if not session.get("user_id"):
+        return redirect(url_for("login"))
+
+    user = {
+        "name": "Demo User",
+        "email": "demo@spendly.com",
+        "member_since": "May 2024",
+        "initials": "DU",
+        "plan": "Starter",
+    }
+
+    stats = [
+        {"label": "Total spent", "value": "Rs 18,240", "note": "This month"},
+        {"label": "Transactions", "value": "34", "note": "Last 30 days"},
+        {"label": "Top category", "value": "Food", "note": "42% of spend"},
+    ]
+
+    transactions = [
+        {
+            "date": "May 12, 2026",
+            "description": "Grocery shopping",
+            "category": "Food",
+            "badge_class": "badge-food",
+            "amount": "- Rs 55.00",
+        },
+        {
+            "date": "May 10, 2026",
+            "description": "New shoes",
+            "category": "Shopping",
+            "badge_class": "badge-shopping",
+            "amount": "- Rs 85.00",
+        },
+        {
+            "date": "May 08, 2026",
+            "description": "Movie tickets",
+            "category": "Entertainment",
+            "badge_class": "badge-entertainment",
+            "amount": "- Rs 25.00",
+        },
+        {
+            "date": "May 05, 2026",
+            "description": "Electricity bill",
+            "category": "Bills",
+            "badge_class": "badge-bills",
+            "amount": "- Rs 120.00",
+        },
+    ]
+
+    categories = [
+        {
+            "name": "Food",
+            "total": "Rs 420.00",
+            "bar_class": "bar-72",
+            "badge_class": "badge-food",
+        },
+        {
+            "name": "Shopping",
+            "total": "Rs 185.00",
+            "bar_class": "bar-48",
+            "badge_class": "badge-shopping",
+        },
+        {
+            "name": "Bills",
+            "total": "Rs 160.00",
+            "bar_class": "bar-38",
+            "badge_class": "badge-bills",
+        },
+        {
+            "name": "Entertainment",
+            "total": "Rs 95.00",
+            "bar_class": "bar-28",
+            "badge_class": "badge-entertainment",
+        },
+    ]
+
+    return render_template(
+        "profile.html",
+        user=user,
+        stats=stats,
+        transactions=transactions,
+        categories=categories,
+    )
 
 
 @app.route("/expenses/add")

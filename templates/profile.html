@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Spendly{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="profile-page">
+    <div class="profile-inner">
+        <header class="profile-header">
+            <div>
+                <p class="profile-eyebrow">Account overview</p>
+                <h1 class="profile-title">Your profile</h1>
+                <p class="profile-subtitle">Manage your personal details and track activity at a glance.</p>
+            </div>
+            <div class="profile-header-actions">
+                <span class="profile-plan">Plan: {{ user.plan }}</span>
+            </div>
+        </header>
+
+        <section class="profile-grid">
+            <article class="profile-card profile-user">
+                <div class="profile-avatar">{{ user.initials }}</div>
+                <div class="profile-user-details">
+                    <p class="profile-name">{{ user.name }}</p>
+                    <p class="profile-email">{{ user.email }}</p>
+                    <p class="profile-meta">Member since {{ user.member_since }}</p>
+                </div>
+            </article>
+
+            <div class="profile-stats">
+                {% for stat in stats %}
+                <article class="profile-card profile-stat">
+                    <p class="profile-stat-label">{{ stat.label }}</p>
+                    <p class="profile-stat-value">{{ stat.value }}</p>
+                    <p class="profile-stat-note">{{ stat.note }}</p>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="profile-content">
+            <article class="profile-card profile-table-card">
+                <div class="profile-section-header">
+                    <div>
+                        <h2 class="profile-section-title">Recent transactions</h2>
+                        <p class="profile-section-subtitle">Latest activity from your account.</p>
+                    </div>
+                </div>
+                <div class="profile-table-wrap">
+                    <table class="profile-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th class="profile-amount">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                            <tr>
+                                <td>{{ tx.date }}</td>
+                                <td>{{ tx.description }}</td>
+                                <td><span class="badge {{ tx.badge_class }}">{{ tx.category }}</span></td>
+                                <td class="profile-amount">{{ tx.amount }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="profile-card profile-breakdown">
+                <div class="profile-section-header">
+                    <div>
+                        <h2 class="profile-section-title">Category breakdown</h2>
+                        <p class="profile-section-subtitle">Where your money goes this month.</p>
+                    </div>
+                </div>
+                <div class="profile-breakdown-list">
+                    {% for category in categories %}
+                    <div class="profile-breakdown-row">
+                        <div class="profile-breakdown-info">
+                            <span class="badge {{ category.badge_class }}">{{ category.name }}</span>
+                            <span class="profile-breakdown-total">{{ category.total }}</span>
+                        </div>
+                        <div class="profile-bar-track">
+                            <span class="profile-bar-fill {{ category.bar_class }}"></span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </article>
+        </section>
+    </div>
+</section>
+
+{% endblock %}
