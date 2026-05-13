@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash
@@ -7,6 +8,12 @@ app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
 from database.db import create_user, get_db, get_user_by_email, init_db, seed_db
+from database.queries import (
+    get_category_breakdown,
+    get_recent_transactions,
+    get_summary_stats,
+    get_user_by_id,
+)
 
 with app.app_context():
     init_db()
@@ -18,6 +25,38 @@ def inject_nav_user():
     if session.get("user_id"):
         return {"nav_user_name": "Demo User"}
     return {}
+
+
+def _format_currency(amount):
+    return f"₹{amount:.2f}"
+
+
+def _format_date(value):
+    try:
+        parsed = datetime.strptime(value, "%Y-%m-%d")
+        return parsed.strftime("%B %d, %Y")
+    except ValueError:
+        return value
+
+
+def _get_initials(name):
+    parts = [part for part in name.split() if part]
+    initials = "".join(part[0] for part in parts[:2]).upper()
+    return initials or name[:1].upper()
+
+
+def _get_badge_class(category):
+    mapping = {
+        "food": "badge-food",
+        "shopping": "badge-shopping",
+        "bills": "badge-bills",
+        "entertainment": "badge-entertainment",
+    }
+    return mapping.get(category.lower(), "")
+
+
+def _get_bar_class(pct):
+    return f"bar-{pct}"
 
 
 # ------------------------------------------------------------------ #
@@ -109,76 +148,57 @@ def profile():
     if not session.get("user_id"):
         return redirect(url_for("login"))
 
+    user_row = get_user_by_id(session["user_id"])
+    if not user_row:
+        abort(404)
+
     user = {
-        "name": "Demo User",
-        "email": "demo@spendly.com",
-        "member_since": "May 2024",
-        "initials": "DU",
+        "name": user_row["name"],
+        "email": user_row["email"],
+        "member_since": user_row["member_since"],
+        "initials": _get_initials(user_row["name"]),
         "plan": "Starter",
     }
 
+    summary = get_summary_stats(session["user_id"])
     stats = [
-        {"label": "Total spent", "value": "Rs 18,240", "note": "This month"},
-        {"label": "Transactions", "value": "34", "note": "Last 30 days"},
-        {"label": "Top category", "value": "Food", "note": "42% of spend"},
+        {
+            "label": "Total spent",
+            "value": _format_currency(summary["total_spent"]),
+            "note": "All time",
+        },
+        {
+            "label": "Transactions",
+            "value": str(summary["transaction_count"]),
+            "note": "All time",
+        },
+        {
+            "label": "Top category",
+            "value": summary["top_category"],
+            "note": "By total spent",
+        },
     ]
 
     transactions = [
         {
-            "date": "May 12, 2026",
-            "description": "Grocery shopping",
-            "category": "Food",
-            "badge_class": "badge-food",
-            "amount": "- Rs 55.00",
-        },
-        {
-            "date": "May 10, 2026",
-            "description": "New shoes",
-            "category": "Shopping",
-            "badge_class": "badge-shopping",
-            "amount": "- Rs 85.00",
-        },
-        {
-            "date": "May 08, 2026",
-            "description": "Movie tickets",
-            "category": "Entertainment",
-            "badge_class": "badge-entertainment",
-            "amount": "- Rs 25.00",
-        },
-        {
-            "date": "May 05, 2026",
-            "description": "Electricity bill",
-            "category": "Bills",
-            "badge_class": "badge-bills",
-            "amount": "- Rs 120.00",
-        },
+            "date": _format_date(transaction["date"]),
+            "description": transaction["description"],
+            "category": transaction["category"],
+            "badge_class": _get_badge_class(transaction["category"]),
+            "amount": f"- {_format_currency(transaction['amount'])}",
+        }
+        for transaction in get_recent_transactions(session["user_id"])
     ]
 
+    breakdown = get_category_breakdown(session["user_id"])
     categories = [
         {
-            "name": "Food",
-            "total": "Rs 420.00",
-            "bar_class": "bar-72",
-            "badge_class": "badge-food",
-        },
-        {
-            "name": "Shopping",
-            "total": "Rs 185.00",
-            "bar_class": "bar-48",
-            "badge_class": "badge-shopping",
-        },
-        {
-            "name": "Bills",
-            "total": "Rs 160.00",
-            "bar_class": "bar-38",
-            "badge_class": "badge-bills",
-        },
-        {
-            "name": "Entertainment",
-            "total": "Rs 95.00",
-            "bar_class": "bar-28",
-            "badge_class": "badge-entertainment",
-        },
+            "name": item["name"],
+            "total": _format_currency(item["amount"]),
+            "bar_class": _get_bar_class(item["pct"]),
+            "badge_class": _get_badge_class(item["name"]),
+        }
+        for item in breakdown
     ]
 
     return render_template(
